@@ -34,7 +34,7 @@ app.post('/login', async (req, res) => {
     })
     const salesforceResult = await conn.login(
       process.env.SALESFORCE_CDW_USERNAME,
-      process.env.SALESFORCE_CDW_PASSWORD + process.env.SALESFORCE_CDW_TOKEN
+      process.env.SALESFORCE_CDW_PASSWORD
     )
     if (salesforceResult) {
       res.send(conn.accessToken)
