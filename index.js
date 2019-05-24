@@ -37,7 +37,11 @@ app.post('/login', async (req, res) => {
       process.env.SALESFORCE_CDW_PASSWORD
     )
     if (salesforceResult) {
-      res.send(conn.accessToken)
+      const response = {
+        "access_token" : conn.accessToken,
+        "instance_url" : conn.instanceUrl
+      }
+      res.send(response)
     } else {
       res.status(401).send('Invalid integration user credential.')
     }
