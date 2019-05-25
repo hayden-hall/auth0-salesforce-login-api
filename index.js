@@ -29,7 +29,7 @@ app.post('/login', async (req, res, next) => {
     next(e)
   })
   if (!auth0Result) {
-    res.status(401).send('Wrong email or password.');
+    res.status(401).send('Invalid login email or password.');
   } else {
     const conn = new jsforce.Connection({
       loginUrl: process.env.SALESFORCE_LOGIN_URL
@@ -40,6 +40,9 @@ app.post('/login', async (req, res, next) => {
     ).catch(e => {
       next(e)
     })
+    if(!salesforceResult){
+      res.status(401).send('Invalid integration username, password, security token; or user locked out.')
+    }
     const response = {
       "access_token": conn.accessToken,
       "instance_url": conn.instanceUrl
