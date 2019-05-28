@@ -42,12 +42,13 @@ app.post('/login', async (req, res, next) => {
     })
     if(!salesforceResult){
       res.status(401).send('Invalid integration username, password, security token; or user locked out.')
+    } else {
+      const response = {
+        "access_token": conn.accessToken,
+        "instance_url": conn.instanceUrl
+      }
+      res.send(response)
     }
-    const response = {
-      "access_token": conn.accessToken,
-      "instance_url": conn.instanceUrl
-    }
-    res.send(response)
   }
 })
 
