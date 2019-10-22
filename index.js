@@ -51,38 +51,3 @@ app.post('/login', async (req, res, next) => {
     }
   }
 })
-
-//TODO: DRY
-app.post('/dev/login', async (req, res, next) => {
-  const auth0Result = await auth0.oauth.passwordGrant({
-    username: req.body.email,
-    password: req.body.password,
-    realm: 'Username-Password-Authentication'
-  }).catch(e => {
-    next(e)
-  })
-  if (!auth0Result) {
-    res.status(401).send('Invalid login email or password.');
-  } else {
-    const conn = new jsforce.Connection({
-      loginUrl: process.env.SALESFORCE_SANDBOX_LOGIN_URL
-    })
-    const salesforceResult = await conn.login(
-      process.env.SALESFORCE_SANDBOX_CDW_USERNAME,
-      process.env.SALESFORCE_SANDBOX_CDW_PASSWORD
-    ).catch(e => {
-      next(e)
-    })
-    if(!salesforceResult){
-      res.status(401).send('Invalid integration username, password, security token; or user locked out.')
-    } else {
-      const response = {
-        "access_token": conn.accessToken,
-        "instance_url": conn.instanceUrl
-      }
-      res.send(response)
-    }
-  }
-})
-
-
