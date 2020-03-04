@@ -1,5 +1,26 @@
 {
-  "name": "Login API for Mobile App",
-  "scripts" : {
-  }
+  "name": "Login API for Hayden Hall Mobile App",
+  "description": "Login API for Hayden Hall Mobile App", 
+  "repository": "https://github.com/hayden-hall/auth0-salesforce-login-api",
+  "env": {
+    "SALESFORCE_LOGIN_URL": {
+      "description": "Salesforce Login URL.",
+      "value": "https://login.salesforce.com"
+    },
+    "SALESFORCE_CDW_USERNAME": {
+      "description": "Username of a Salesforce integration user.",
+      "value": "cdw@example.com"
+    },
+    "SALESFORCE_CDW_PASSWORD": {
+      "description": "Password of a Salesforce integration user.",
+      "value": "password"
+    },
+    "SALESFORCE_CDW_TOKEN": {
+      "description": "Security token of a Salefsorce integration user.",
+      "value": "abcdefg"
+    }
+  },
+  "addons": [
+    "auth0:free"
+  ]
 }
