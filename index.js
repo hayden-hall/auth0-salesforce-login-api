@@ -45,7 +45,8 @@ app.post('/login', async (req, res, next) => {
     } else {
       const response = {
         "access_token": conn.accessToken,
-        "instance_url": conn.instanceUrl
+        "instance_url": conn.instanceUrl,
+        "refresh_token": conn.refreshToken
       }
       res.send(response)
     }
