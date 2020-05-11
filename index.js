@@ -46,9 +46,29 @@ app.post('/login', async (req, res, next) => {
       const response = {
         "access_token": conn.accessToken,
         "instance_url": conn.instanceUrl,
-        "refresh_token": conn.refreshToken
       }
       res.send(response)
     }
+  }
+})
+
+app.post('/token', async (req, res, next) => {
+  const conn = new jsforce.Connection({
+    loginUrl: process.env.SALESFORCE_LOGIN_URL
+  })
+  const salesforceResult = await conn.login(
+    process.env.SALESFORCE_CDW_USERNAME,
+    process.env.SALESFORCE_CDW_PASSWORD + process.env.SALESFORCE_CDW_TOKEN
+  ).catch(e => {
+    next(e)
+  })
+  if(!salesforceResult){
+    res.status(401).send('Invalid integration username, password, security token; or user locked out.')
+  } else {
+    const response = {
+      "access_token": conn.accessToken,
+      "instance_url": conn.instanceUrl,
+    }
+    res.send(response)
   }
 })
