@@ -20,55 +20,42 @@ app.listen(PORT, () => console.log(`Listening on ${PORT}`))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.post('/login', async (req, res, next) => {
-  const auth0Result = await auth0.oauth.passwordGrant({
-    username: req.body.email,
-    password: req.body.password,
-    realm: 'Username-Password-Authentication'
-  }).catch(e => {
-    next(e)
-  })
-  if (!auth0Result) {
-    res.status(401).send('Invalid login email or password.');
-  } else {
-    const conn = new jsforce.Connection({
-      loginUrl: process.env.SALESFORCE_LOGIN_URL
-    })
-    const salesforceResult = await conn.login(
-      process.env.SALESFORCE_CDW_USERNAME,
-      process.env.SALESFORCE_CDW_PASSWORD + process.env.SALESFORCE_CDW_TOKEN
-    ).catch(e => {
-      next(e)
-    })
-    if(!salesforceResult){
-      res.status(401).send('Invalid integration username, password, security token; or user locked out.')
+app.post('/login', (req, res, next) => {
+  (async () => {
+    const auth0Result = await auth0.oauth.passwordGrant({
+      username: req.body.email,
+      password: req.body.password,
+      realm: 'Username-Password-Authentication'
+    });
+    if (!auth0Result) {
+      res.status(401).send('Invalid login email or password.');
     } else {
-      const response = {
-        "access_token": conn.accessToken,
-        "instance_url": conn.instanceUrl,
-      }
-      res.send(response)
+      await createSalesforceConnection(res);
     }
-  }
+  })().catch(next);
 })
 
-app.post('/token', async (req, res, next) => {
+app.post('/token', (req, res, next) => {
+  (async () => {
+    await createSalesforceConnection(res);
+  })().catch(next);
+})
+
+async function createSalesforceConnection(res) {
   const conn = new jsforce.Connection({
     loginUrl: process.env.SALESFORCE_LOGIN_URL
-  })
+  });
   const salesforceResult = await conn.login(
     process.env.SALESFORCE_CDW_USERNAME,
     process.env.SALESFORCE_CDW_PASSWORD + process.env.SALESFORCE_CDW_TOKEN
-  ).catch(e => {
-    next(e)
-  })
+  );
   if(!salesforceResult){
-    res.status(401).send('Invalid integration username, password, security token; or user locked out.')
+    res.status(401).send('Invalid integration username, password, security token; or user locked out.');
   } else {
     const response = {
       "access_token": conn.accessToken,
       "instance_url": conn.instanceUrl,
-    }
-    res.send(response)
+    };
+    res.send(response);
   }
-})
+}
