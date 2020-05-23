@@ -37,6 +37,9 @@ app.post('/login', (req, res, next) => {
 
 app.post('/token', (req, res, next) => {
   (async () => {
+    if (req.body.refreshKey !== process.env.REFRESH_KEY) {
+      res.status(401).send('Invalid key.');
+    }
     await createSalesforceConnection(res);
   })().catch(next);
 })
