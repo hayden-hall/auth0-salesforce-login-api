@@ -22,11 +22,13 @@ app.use(bodyParser.json())
 
 app.post('/login', (req, res, next) => {
   (async () => {
+    console.log(JSON.stringify(req.body));
     const auth0Result = await auth0.oauth.passwordGrant({
       username: req.body.email,
       password: req.body.password,
       realm: 'Username-Password-Authentication'
     });
+    console.log(auth0Result);
     if (!auth0Result) {
       res.status(401).send('Invalid login email or password.');
     } else {
