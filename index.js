@@ -29,7 +29,9 @@ app.post('/login', async (req, res, next) => {
     });
     await createSalesforceConnection(res);
   } catch (error) {
-    res.status(error.message.statusCode).send(error.message.error_description);
+    res.status(error.message.statusCode).send({
+      description: error.message.error_description
+    });
   } 
 })
 
