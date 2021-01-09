@@ -29,9 +29,7 @@ app.post('/login', async (req, res, next) => {
     });
     await createSalesforceConnection(res);
   } catch (error) {
-    console.log(error);
-    console.log(JSON.stringify(error));
-    res.status(401).send('Invalid login email or password.');
+    res.status(error.message.statusCode).send(error.message.error_description);
   } 
 })
 
